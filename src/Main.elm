@@ -5,6 +5,8 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import About
 import Route
+import Navigation
+import String exposing (split)
 
 
 type alias Model =
@@ -16,11 +18,15 @@ type Msg
     = NoOp
 
 
-init : ( Model, Cmd Msg )
-init =
-    { route = Route.init (Just Route.Topics)
-    }
-        ! []
+init : Maybe Route.Location -> ( Model, Cmd Msg )
+init location =
+    let
+        route =
+            Route.init location
+    in
+        { route = route
+        }
+            ! []
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -70,11 +76,17 @@ currentPageView model =
     text "home page"
 
 
+updateRoute : Maybe Route.Location -> Model -> ( Model, Cmd Msg )
+updateRoute route model =
+    { model | route = route } ! []
+
+
 main : Program Never
 main =
-    App.program
+    Navigation.program (Navigation.makeParser Route.locFor)
         { init = init
         , update = update
-        , subscriptions = subscriptions
+        , urlUpdate = updateRoute
         , view = view
+        , subscriptions = subscriptions
         }
