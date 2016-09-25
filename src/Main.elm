@@ -3,10 +3,13 @@ module Main exposing (..)
 import Html.App as App
 import Html exposing (..)
 import Html.Attributes exposing (..)
+import About
+import Route
 
 
 type alias Model =
-    {}
+    { route : Route.Model
+    }
 
 
 type Msg
@@ -15,7 +18,9 @@ type Msg
 
 init : ( Model, Cmd Msg )
 init =
-    {} ! []
+    { route = Route.init (Just Route.Topics)
+    }
+        ! []
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -32,10 +37,22 @@ subscriptions _ =
 
 view : Model -> Html Msg
 view model =
-    div []
-        [ navigationView model
-        , currentPageView model
-        ]
+    let
+        body =
+            case model.route of
+                Just (Route.Home) ->
+                    About.view
+
+                Just (Route.Topics) ->
+                    text "topics view goes here"
+
+                Nothing ->
+                    text "Not found!"
+    in
+        div []
+            [ navigationView model
+            , body
+            ]
 
 
 navigationView : Model -> Html Msg
