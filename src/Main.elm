@@ -6,9 +6,9 @@ import Html.Attributes exposing (..)
 import About
 import Route
 import Navigation
-import String exposing (split)
 import Topic
-import Helpers exposing (link)
+import Helpers
+import Styles
 
 
 type alias Model =
@@ -46,6 +46,11 @@ subscriptions _ =
 view : Model -> Html Msg
 view model =
     let
+        -- First, we'll compile our stylesheet to produce the string of css we want to
+        -- add to the browser.
+        compiled =
+            Styles.compile [ Styles.css ]
+
         body =
             case model.route of
                 Just (Route.Home) ->
@@ -61,29 +66,32 @@ view model =
                     text "Not found!"
     in
         div []
-            [ navigationView model
+            [ node "style" [ type' "text/css" ] [ text compiled.css ]
+            , navigationView model
             , body
             ]
 
 
 navigationView : Model -> Html Msg
 navigationView model =
-    nav []
-        [ ul []
-            [ li [] [ link ( Route.Home, "Home" ) ]
-            , li [] [ link ( Route.Topics, "Topics" ) ]
+    let
+        { id } =
+            Styles.navbarNamespace
+
+        linkListItem linkData =
+            li [] [ link model.route linkData ]
+    in
+        nav [ id Styles.Navbar ]
+            [ ul []
+                (List.map linkListItem links)
             ]
-        ]
 
 
-currentPageView : Model -> Html Msg
-currentPageView model =
-    text "home page"
-
-
-updateRoute : Maybe Route.Location -> Model -> ( Model, Cmd Msg )
-updateRoute route model =
-    { model | route = route } ! []
+links : List ( Route.Location, String )
+links =
+    [ ( Route.Home, "Home" )
+    , ( Route.Topics, "Topics" )
+    ]
 
 
 main : Program Never
@@ -92,6 +100,33 @@ main =
         { init = init
         , update = update
         , urlUpdate = updateRoute
-        , view = view
         , subscriptions = subscriptions
+        , view = view
         }
+
+
+updateRoute : Maybe Route.Location -> Model -> ( Model, Cmd Msg )
+updateRoute route model =
+    { model | route = route } ! []
+
+
+link : Maybe Route.Location -> ( Route.Location, String ) -> Html msg
+link currentRoute linkData =
+    let
+        ( loc, _ ) =
+            linkData
+
+        isActive =
+            case currentRoute of
+                Nothing ->
+                    False
+
+                Just route ->
+                    case route of
+                        Route.Topic _ ->
+                            loc == Route.Topics || loc == route
+
+                        _ ->
+                            route == loc
+    in
+        Helpers.link isActive linkData

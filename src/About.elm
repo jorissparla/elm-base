@@ -1,8 +1,8 @@
 module About exposing (..)
 
-import Html exposing (..)
+import Html exposing (Html, text)
 
 
 view : Html msg
 view =
-    text "About menu=1"
+    text "This is the about page"

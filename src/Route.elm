@@ -14,6 +14,11 @@ type alias Model =
     Maybe Location
 
 
+init : Maybe Location -> Model
+init location =
+    location
+
+
 urlFor : Location -> String
 urlFor loc =
     let
@@ -25,7 +30,6 @@ urlFor loc =
                 Topics ->
                     "/topics"
 
-                -- ...
                 Topic slug ->
                     "/topics/" ++ slug
     in
@@ -35,30 +39,20 @@ urlFor loc =
 locFor : Navigation.Location -> Maybe Location
 locFor path =
     let
-        -- We'll look at the path's hash and split on slash, ignoring empty
-        -- segments and the hash symbol.
         segments =
             path.hash
                 |> split "/"
                 |> List.filter (\seg -> seg /= "" && seg /= "#")
     in
         case segments of
-            -- No segments means we're on the home page
             [] ->
                 Just Home
+
+            [ "topics" ] ->
+                Just Topics
 
             [ "topics", slug ] ->
                 Just (Topic slug)
 
-            -- "/topics" means we're on the topics page
-            [ "topics" ] ->
-                Just Topics
-
-            -- Otherwise, return `Nothing` and let our "not found" view take over
             _ ->
                 Nothing
-
-
-init : Maybe Location -> Model
-init location =
-    location

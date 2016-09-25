@@ -12,13 +12,6 @@ type alias Topic =
     }
 
 
-fakeTopics : List Topic
-fakeTopics =
-    [ { id = 1, title = "Elixir", slug = "elixir" }
-    , { id = 2, title = "Elm", slug = "elm" }
-    ]
-
-
 view : List Topic -> Html msg
 view topics =
     ul []
@@ -27,7 +20,7 @@ view topics =
 
 topicListItemView : Topic -> Html msg
 topicListItemView topic =
-    li [] [ link ( Route.Topic topic.slug, topic.title ) ]
+    li [] [ link False ( Route.Topic topic.slug, topic.title ) ]
 
 
 viewTopic : String -> List Topic -> Html msg
@@ -39,7 +32,14 @@ viewTopic slug topics =
     in
         case currentTopic of
             Nothing ->
-                text "Topic not found!"
+                text "Nothing to see here"
 
             Just topic ->
                 text ("This is the " ++ topic.slug ++ " topic")
+
+
+fakeTopics : List Topic
+fakeTopics =
+    [ { id = 1, title = "Elixir", slug = "elixir" }
+    , { id = 2, title = "Elm", slug = "elm" }
+    ]
