@@ -7,10 +7,29 @@ import Navigation
 type Location
     = Home
     | Topics
+    | Topic String
 
 
 type alias Model =
     Maybe Location
+
+
+urlFor : Location -> String
+urlFor loc =
+    let
+        url =
+            case loc of
+                Home ->
+                    "/"
+
+                Topics ->
+                    "/topics"
+
+                -- ...
+                Topic slug ->
+                    "/topics/" ++ slug
+    in
+        "#" ++ url
 
 
 locFor : Navigation.Location -> Maybe Location
@@ -27,6 +46,9 @@ locFor path =
             -- No segments means we're on the home page
             [] ->
                 Just Home
+
+            [ "topics", slug ] ->
+                Just (Topic slug)
 
             -- "/topics" means we're on the topics page
             [ "topics" ] ->

@@ -7,6 +7,8 @@ import About
 import Route
 import Navigation
 import String exposing (split)
+import Topic
+import Helpers exposing (link)
 
 
 type alias Model =
@@ -50,7 +52,10 @@ view model =
                     About.view
 
                 Just (Route.Topics) ->
-                    text "topics view goes here"
+                    Topic.view Topic.fakeTopics
+
+                Just (Route.Topic slug) ->
+                    Topic.viewTopic slug Topic.fakeTopics
 
                 Nothing ->
                     text "Not found!"
@@ -65,8 +70,8 @@ navigationView : Model -> Html Msg
 navigationView model =
     nav []
         [ ul []
-            [ li [] [ a [ href "#" ] [ text "Home" ] ]
-            , li [] [ a [ href "#" ] [ text "Topics" ] ]
+            [ li [] [ link ( Route.Home, "Home" ) ]
+            , li [] [ link ( Route.Topics, "Topics" ) ]
             ]
         ]
 
