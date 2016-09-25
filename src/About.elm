@@ -4,4 +4,4 @@ import Html exposing (..)
 
 
 view =
-    text "About menu"
+    text "About menu=1"
